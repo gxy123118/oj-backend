@@ -36,6 +36,8 @@ public class QuestionStatusListener {
         JudgeInfo bean = JSONUtil.toBean(judgeInfo, JudgeInfo.class);
         // 如果判题成功，更新题目的通过数
         Question oldQuestion = questionService.getById(questionSubmit.getQuestionId());
+        log.info("判题状态信息{}", bean.getMessage());
+
         if (Objects.equals(bean.getMessage(), JudgeInfoMessageEnum.ACCEPTED.toString())) {
 
             questionService.update()

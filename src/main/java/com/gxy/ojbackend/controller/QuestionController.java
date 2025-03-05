@@ -254,10 +254,10 @@ public class QuestionController {
     public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
                                                                HttpServletRequest request) {
         //redis 缓存
-        if (stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getCurrent()) != null) {
+        if (stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle()) != null) {
             log.info("redis缓存命中");
             return ResultUtils.success(
-                    JSONUtil.toBean(stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getCurrent()), Page.class));
+                    JSONUtil.toBean(stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle()), Page.class));
         } else {
             long current = questionQueryRequest.getCurrent();
             long size = questionQueryRequest.getPageSize();
@@ -268,12 +268,17 @@ public class QuestionController {
             Page<Question> questionPage = questionService.page(new Page<>(current, size), queryWrapper);
             log.info("questionPage:{}", "题目列表");
             Page<QuestionVO> questionVOPage = questionService.getQuestionVOPage(questionPage, request);
+//            //如果查询结果是空,不放入redis
+//            if (questionVOPage.getRecords().isEmpty()){
+//
+//                return ResultUtils.success(questionVOPage);
+//            }
             //redis时间格式化
             JSONConfig jsonConfig = new JSONConfig();
             jsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
 
             stringRedisTemplate.opsForValue().set(
-                    "questionList" + questionQueryRequest.getCurrent(), JSONUtil.toJsonStr(questionVOPage, jsonConfig), 3, TimeUnit.HOURS);
+                    "questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle(), JSONUtil.toJsonStr(questionVOPage, jsonConfig), 3, TimeUnit.MINUTES);
             return ResultUtils.success(questionVOPage);
         }
 
@@ -331,7 +336,7 @@ public class QuestionController {
                 .orderBy(true, false, "createTime");
         //page方法会自动计算total
         Page<QuestionSubmit> page = questionSubmitService.page(qsp, qw);
-        User loginUser =userService.getLoginUser(request);
+        User loginUser = userService.getLoginUser(request);
 
         return ResultUtils.success(questionSubmitService.getQuestionVOPage(page, loginUser));
     }

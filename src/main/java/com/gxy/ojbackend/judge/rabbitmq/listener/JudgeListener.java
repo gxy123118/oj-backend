@@ -32,6 +32,7 @@ public class JudgeListener {
     )
     public void judgeListener(Long message) {
         log.info("判题者监听到消息：{}", message);
+//        throw new BusinessException(500, "判题者正在处理中，请稍后再试");
         judgeService.doJudge(message);
 
     }

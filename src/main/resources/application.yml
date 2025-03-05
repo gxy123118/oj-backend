@@ -19,6 +19,14 @@ spring:
     port: 5672
     username: guest
     password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3 # 最大重试次数
+          initial-interval: 5000 # 初始重试间隔（毫秒）
+          multiplier: 2.0 # 重试间隔倍数
+          max-interval: 50000 # 最大重试间隔（毫秒）
   session:
     store-type: redis
     # 30 天过期
@@ -54,6 +62,7 @@ logging:
 
 codesandbox:
   type: "remote"
-  url: "888"
+  url: "123.207.158.188:8089"
 knife4j:
   enable: true
+
