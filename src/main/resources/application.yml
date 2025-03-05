@@ -1,0 +1,61 @@
+# 公共配置文件
+spring:
+  application:
+    name: oj-service
+  profiles:
+    active: dev
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  # session 配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 1
+    # session 配置
+  rabbitmq:
+    host: 8.140.224.10
+    port: 5672
+    username: guest
+    password: guest
+  session:
+    store-type: redis
+    # 30 天过期
+    timeout: 2592000
+  # 数据库配置
+  # todo 需替换配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/oj
+    username: gxy
+    password: Coldplay789
+server:
+  address: 0.0.0.0
+  port: 8111
+  servlet:
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
+        path: /api
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+logging:
+  level:
+    com.example.client.UserFeignClient: DEBUG
+    com:
+      gxy:
+        oj:
+          mapper: debug
+
+codesandbox:
+  type: "remote"
+  url: "888"
