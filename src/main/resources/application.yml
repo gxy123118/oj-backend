@@ -28,7 +28,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/oj
-    username: gxy
+    username: root
     password: Coldplay789
 server:
   address: 0.0.0.0
@@ -50,12 +50,10 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
 logging:
   level:
-    com.example.client.UserFeignClient: DEBUG
-    com:
-      gxy:
-        oj:
-          mapper: debug
+    com.gxy.ojbackend.mapper: debug
 
 codesandbox:
   type: "remote"
   url: "888"
+knife4j:
+  enable: true

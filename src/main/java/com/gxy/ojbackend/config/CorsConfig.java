@@ -2,24 +2,30 @@ package com.gxy.ojbackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsWebFilter;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import java.util.Collections;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 public class CorsConfig {
 
     @Bean
-    public CorsWebFilter corsFilter() {
+    public CorsFilter corsFilter() {
+        // 设置 CORS 配置
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("*")); // 允许所有来源
-        config.setAllowedMethods(Collections.singletonList("*")); // 允许所有请求方法
-        config.setAllowedHeaders(Collections.singletonList("*")); // 允许所有请求头
-        config.setAllowCredentials(true); // 允许携带 Cookie
+        config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
+        // todo 实际改为线上真实域名、本地域名
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.addAllowedHeader("*");
 
+        // 设置 URL 路径与 CORS 配置的映射关系
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsWebFilter(source);
+        source.registerCorsConfiguration("/**", config); // 配置所有路径
+
+        // 返回一个新的 CorsFilter 实例
+        return new CorsFilter(source);
     }
 }
