@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class OjBackendApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(OjBackendApplication.class, args);
         log.info("启动成功");
     }

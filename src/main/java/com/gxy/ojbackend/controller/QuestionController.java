@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * 题目接口
@@ -253,12 +254,27 @@ public class QuestionController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
                                                                HttpServletRequest request) {
+        String redisKey = "questionList" +questionQueryRequest.getCurrent();
+        boolean b = questionQueryRequest.getTags().isEmpty() && Objects.equals(questionQueryRequest.getTitle(), "") && questionQueryRequest.getCurrent() == 1;
         //redis 缓存
-        if (stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle()) != null) {
+        if (b&&stringRedisTemplate.opsForValue().get(redisKey) != null) {
             log.info("redis缓存命中");
             return ResultUtils.success(
-                    JSONUtil.toBean(stringRedisTemplate.opsForValue().get("questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle()), Page.class));
-        } else {
+                    JSONUtil.toBean(stringRedisTemplate.opsForValue().get(redisKey), Page.class));
+        } else if (b) {
+            //redis时间格式化
+            JSONConfig jsonConfig = new JSONConfig();
+            jsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
+            long current = questionQueryRequest.getCurrent();
+            long size = questionQueryRequest.getPageSize();
+            QueryWrapper<Question> queryWrapper = questionService.getQueryWrapper(questionQueryRequest);
+            Page<Question> questionPage = questionService.page(new Page<>(current, size), queryWrapper);
+            log.info("questionPage:{}", "题目列表");
+            Page<QuestionVO> questionVOPage = questionService.getQuestionVOPage(questionPage, request);
+            stringRedisTemplate.opsForValue().set(
+                    redisKey, JSONUtil.toJsonStr(questionVOPage, jsonConfig), 3, TimeUnit.MINUTES);
+            return ResultUtils.success(questionVOPage);
+        }else {
             long current = questionQueryRequest.getCurrent();
             long size = questionQueryRequest.getPageSize();
             // 限制爬虫
@@ -273,12 +289,7 @@ public class QuestionController {
 //
 //                return ResultUtils.success(questionVOPage);
 //            }
-            //redis时间格式化
-            JSONConfig jsonConfig = new JSONConfig();
-            jsonConfig.setDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            stringRedisTemplate.opsForValue().set(
-                    "questionList" + questionQueryRequest.getTags().toString() + questionQueryRequest.getTitle(), JSONUtil.toJsonStr(questionVOPage, jsonConfig), 3, TimeUnit.MINUTES);
             return ResultUtils.success(questionVOPage);
         }
 
