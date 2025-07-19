@@ -30,8 +30,6 @@ import static com.gxy.ojbackend.service.impl.UserServiceImpl.SALT;
 /**
  * 用户接口
  *
- * @author <a href="https://github.com/ligxy">程序员鱼皮</a>
- * @from <a href="https://gxy.icu">编程导航知识星球</a>
  */
 @RestController
 @RequestMapping("/api/user")

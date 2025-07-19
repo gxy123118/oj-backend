@@ -14,13 +14,6 @@
         <spring-boot.version>2.6.13</spring-boot.version>
     </properties>
     <dependencies>
-        <!--tongyi-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-ai</artifactId>
-            <version>2023.0.1.0</version>
-        </dependency>
-
 
 
         <dependency>
