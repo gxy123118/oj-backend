@@ -15,6 +15,7 @@ import com.gxy.ojbackend.model.entity.User;
 import com.gxy.ojbackend.model.vo.LoginUserVO;
 import com.gxy.ojbackend.model.vo.UserVO;
 import com.gxy.ojbackend.service.UserService;
+import javassist.Loader;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.gxy.ojbackend.service.impl.UserServiceImpl.SALT;
